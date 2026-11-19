@@ -1,0 +1,7 @@
+.venv/
+outputs/
+data/*.jsonl
+*.gguf
+*.bin
+*.safetensors
+__pycache__/
