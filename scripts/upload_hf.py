@@ -1,3 +1,6 @@
+import os
+os.environ["HF_HUB_DISABLE_XET"] = "1"
+
 from pathlib import Path
 from huggingface_hub import HfApi
 
@@ -7,25 +10,32 @@ api = HfApi()
 
 def main():
     api.create_repo(repo_id=REPO_ID, repo_type="model", exist_ok=True)
+    existing_files = set(api.list_repo_files(repo_id=REPO_ID, repo_type="model"))
 
     q4_file = next(Path("outputs/gguf").rglob("*Q4_K_M.gguf"))
     q8_file = next(Path("outputs/gguf").rglob("*Q8_0.gguf"))
 
-    print(f"Uploading {q4_file} -> Actuator-7B-Q4_K_M.gguf...")
-    api.upload_file(
-        path_or_fileobj=str(q4_file),
-        path_in_repo="Actuator-7B-Q4_K_M.gguf",
-        repo_id=REPO_ID,
-        repo_type="model",
-    )
+    if "Actuator-7B-Q4_K_M.gguf" not in existing_files:
+        print(f"Uploading {q4_file} -> Actuator-7B-Q4_K_M.gguf...")
+        api.upload_file(
+            path_or_fileobj=str(q4_file),
+            path_in_repo="Actuator-7B-Q4_K_M.gguf",
+            repo_id=REPO_ID,
+            repo_type="model",
+        )
+    else:
+        print("Actuator-7B-Q4_K_M.gguf already present on Hugging Face, skipping.")
 
-    print(f"Uploading {q8_file} -> Actuator-7B-Q8_0.gguf...")
-    api.upload_file(
-        path_or_fileobj=str(q8_file),
-        path_in_repo="Actuator-7B-Q8_0.gguf",
-        repo_id=REPO_ID,
-        repo_type="model",
-    )
+    if "Actuator-7B-Q8_0.gguf" not in existing_files:
+        print(f"Uploading {q8_file} -> Actuator-7B-Q8_0.gguf via LFS...")
+        api.upload_file(
+            path_or_fileobj=str(q8_file),
+            path_in_repo="Actuator-7B-Q8_0.gguf",
+            repo_id=REPO_ID,
+            repo_type="model",
+        )
+    else:
+        print("Actuator-7B-Q8_0.gguf already present on Hugging Face, skipping.")
 
     yaml_header = (
         "---\n"
