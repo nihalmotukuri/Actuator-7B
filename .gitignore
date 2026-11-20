@@ -5,3 +5,4 @@ data/*.jsonl
 *.bin
 *.safetensors
 __pycache__/
+unsloth_compiled_cache/
