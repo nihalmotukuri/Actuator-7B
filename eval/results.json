@@ -1,0 +1,30 @@
+{
+  "qwen2.5:7b": {
+    "model": "qwen2.5:7b",
+    "valid_tool_syntax_pct": 100.0,
+    "exact_tool_arg_match_pct": 53.73,
+    "abstention_accuracy_pct": 84.85,
+    "raw_json_no_fence_pct": 96.0,
+    "strict_jsonschema_pass_pct": 96.0,
+    "avg_latency_ms": 1689.9,
+    "counts": {
+      "tool_tasks": 67,
+      "abstain_tasks": 33,
+      "schema_tasks": 50
+    }
+  },
+  "actuator-7b": {
+    "model": "actuator-7b",
+    "valid_tool_syntax_pct": 100.0,
+    "exact_tool_arg_match_pct": 76.12,
+    "abstention_accuracy_pct": 100.0,
+    "raw_json_no_fence_pct": 100.0,
+    "strict_jsonschema_pass_pct": 100.0,
+    "avg_latency_ms": 1895.5,
+    "counts": {
+      "tool_tasks": 67,
+      "abstain_tasks": 33,
+      "schema_tasks": 50
+    }
+  }
+}
