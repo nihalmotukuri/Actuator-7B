@@ -1,3 +1,4 @@
+import json
 import os
 os.environ["HF_HUB_DISABLE_XET"] = "1"
 
@@ -16,15 +17,13 @@ def main():
     q8_file = next(Path("outputs/gguf").rglob("*Q8_0.gguf"))
 
     if "Actuator-7B-Q4_K_M.gguf" not in existing_files:
-        print(f"Uploading {q4_file} -> Actuator-7B-Q4_K_M.gguf...")
+        print(f"Uploading {q4_file} -> Actuator-7B-Q4_K_M.gguf via LFS...")
         api.upload_file(
             path_or_fileobj=str(q4_file),
             path_in_repo="Actuator-7B-Q4_K_M.gguf",
             repo_id=REPO_ID,
             repo_type="model",
         )
-    else:
-        print("Actuator-7B-Q4_K_M.gguf already present on Hugging Face, skipping.")
 
     if "Actuator-7B-Q8_0.gguf" not in existing_files:
         print(f"Uploading {q8_file} -> Actuator-7B-Q8_0.gguf via LFS...")
@@ -34,8 +33,26 @@ def main():
             repo_id=REPO_ID,
             repo_type="model",
         )
-    else:
-        print("Actuator-7B-Q8_0.gguf already present on Hugging Face, skipping.")
+
+    params_json = json.dumps({
+        "temperature": 0.1,
+        "top_p": 0.9,
+        "stop": ["<|im_start|>", "<|im_end|>"]
+    }, indent=2)
+    api.upload_file(
+        path_or_fileobj=params_json.encode("utf-8"),
+        path_in_repo="params",
+        repo_id=REPO_ID,
+        repo_type="model",
+    )
+
+    system_prompt = "You are Actuator-7B, a deterministic tool-calling and structured-data engine."
+    api.upload_file(
+        path_or_fileobj=system_prompt.encode("utf-8"),
+        path_in_repo="system",
+        repo_id=REPO_ID,
+        repo_type="model",
+    )
 
     yaml_header = (
         "---\n"
